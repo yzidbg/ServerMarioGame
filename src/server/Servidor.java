@@ -2,6 +2,7 @@ package server;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
 
@@ -11,7 +12,9 @@ public class Servidor {
     private final int noConexiones = 20;
     //Creamos una lista de sockets, donde guardaremos los sockets que se vayan conectando
     private LinkedList<Socket> usuarios = new LinkedList<Socket>();
-    private int numCli=0;
+    private int numCli=1;
+    private ArrayList<PlayerScore> arr= new ArrayList<PlayerScore>();
+    private boolean endGame=false;
        
    //Funcion para que el servidor empieze a recibir conexiones de clientes
     public void escuchar(){
@@ -19,20 +22,24 @@ public class Servidor {
             //Creamos el socket servidor
             ServerSocket servidor = new ServerSocket(puerto,noConexiones);
             //Ciclo infinito para estar escuchando por nuevos clientes
-            while(true){
-                System.out.println("Escuchando...."+(numCli++));
+            while(numCli<=2){
+                System.out.println("Escuchando...."+(numCli));
                 //Cuando un cliente se conecte guardamos el socket en nuestra lista
                 Socket cliente = servidor.accept();
                 usuarios.add(cliente);
                 //Instanciamos un hilo que estara atendiendo al cliente y lo ponemos a escuchar
-                Runnable  run = new HiloServidor(cliente,usuarios);
+                Runnable  run = new HiloServidor(cliente, usuarios, numCli, arr);
+                //arr.add(run.getPs());
                 Thread hilo = new Thread(run);
                 hilo.start();
+                
+                numCli++;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         
+        //public void 
     }
     
     //Funcion main para correr el servidor
