@@ -47,6 +47,7 @@ public class HiloServidor implements Runnable{
             //ps = new PlayerScore(contPlay, in.readUTF());
             ps.setCodPlayer(contPlay);
             ps.setNombrePlayer(in.readUTF());
+            //System.out.println("usuario: "+ps.getNombrePlayer());
             if(contPlay>=2){
                 for (int i = 0; i < usuarios.size(); i++) {
                     out = new DataOutputStream(usuarios.get(i).getOutputStream());
