@@ -11,7 +11,7 @@ public class Servidor {
     private final int puerto = 2027;
     private final int noConexiones = 20;
     //Creamos una lista de sockets, donde guardaremos los sockets que se vayan conectando
-    private LinkedList<Socket> usuarios = new LinkedList<Socket>();
+    private LinkedList<Socket> clientes = new LinkedList<Socket>();
     private int numCli=1;
     private ArrayList<PlayerScore> arr= new ArrayList<PlayerScore>();
     private boolean endGame=false;
@@ -22,16 +22,17 @@ public class Servidor {
             //Creamos el socket servidor
             ServerSocket servidor = new ServerSocket(puerto,noConexiones);
             //Ciclo infinito para estar escuchando por nuevos clientes
-            while(numCli<=2){
+            //while(numCli<=2){
+            while(true){
                 System.out.println("Escuchando...."+(numCli));
                 //Cuando un cliente se conecte guardamos el socket en nuestra lista
                 Socket cliente = servidor.accept();
-                usuarios.add(cliente);
+                clientes.add(cliente);
                 //Instanciamos un hilo que estara atendiendo al cliente y lo ponemos a escuchar
-                Runnable  run = new HiloServidor(cliente, usuarios, numCli, arr);
-                //arr.add(run.getPs());
+                Runnable  run = new HiloServidor(cliente, clientes, numCli, arr);
                 Thread hilo = new Thread(run);
                 hilo.start();
+                //arr.add(run.getPs());
                 
                 numCli++;
             }

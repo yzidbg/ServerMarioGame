@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import javax.swing.JOptionPane;
 
 /**
  *
- * @author netosolis
+ * @author yz
  */
 public class HiloServidor implements Runnable{
     //Declaramos las variables que utiliza el hilo para estar recibiendo y mandando mensajes
@@ -20,7 +19,7 @@ public class HiloServidor implements Runnable{
     private DataOutputStream out;
     //Lista de los usuarios conectados al servidor
     private LinkedList<Socket> usuarios = new LinkedList<Socket>();
-    private PlayerScore ps;
+    private PlayerScore ps = new PlayerScore();
     private int contPlay;
     private ArrayList<PlayerScore> pl= new ArrayList<PlayerScore>();
 
@@ -45,10 +44,21 @@ public class HiloServidor implements Runnable{
             out = new DataOutputStream(socket.getOutputStream());
             out.writeUTF("<h2>Bienvenido....</h2>");
             //System.err.println(in.readUTF());
-            ps = new PlayerScore(contPlay, in.readUTF());
+            //ps = new PlayerScore(contPlay, in.readUTF());
+            ps.setCodPlayer(contPlay);
+            ps.setNombrePlayer(in.readUTF());
+            if(contPlay>=2){
+                for (int i = 0; i < usuarios.size(); i++) {
+                    out = new DataOutputStream(usuarios.get(i).getOutputStream());
+                    out.writeUTF("start");
+                }
+            }
             //Ciclo infinito para escuchar por mensajes del cliente
             while(true){
                String recibido = in.readUTF();
+               if(recibido.equals("addCoin")){
+                   ps.addScore(1);
+               }
                //Cuando se recibe un mensaje se envia a todos los usuarios conectados 
                 for (int i = 0; i < usuarios.size(); i++) {
                     out = new DataOutputStream(usuarios.get(i).getOutputStream());
