@@ -44,11 +44,8 @@ public class HiloServidor implements Runnable{
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             out.writeUTF("<h2>Bienvenido....</h2>");
-            //System.err.println(in.readUTF());
-            //ps = new PlayerScore(contPlay, in.readUTF());
             ps.setCodPlayer(contPlay);
             ps.setNombrePlayer(in.readUTF());
-            //System.out.println("usuario: "+ps.getNombrePlayer());
             if(contPlay>=2){
                 for (int i = 0; i < usuarios.size(); i++) {
                     out = new DataOutputStream(usuarios.get(i).getOutputStream());
