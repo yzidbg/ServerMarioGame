@@ -2,9 +2,8 @@ package server;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import javax.swing.JOptionPane;
+import java.util.*;
+
 
 public class Servidor {
     //Inicializamos el puerto y el numero maximo de conexciones que acepta el servidor
@@ -15,7 +14,8 @@ public class Servidor {
     private int numCli=1;
     private ArrayList<PlayerScore> arr= new ArrayList<PlayerScore>();
     private boolean endGame=false;
-       
+    private Map mapaResultados= new HashMap();
+    
    //Funcion para que el servidor empieze a recibir conexiones de clientes
     public void escuchar(){
         try {
@@ -29,9 +29,11 @@ public class Servidor {
                 Socket cliente = servidor.accept();
                 clientes.add(cliente);
                 //Instanciamos un hilo que estara atendiendo al cliente y lo ponemos a escuchar
-                Runnable  run = new HiloServidor(cliente, clientes, numCli, arr);
+                Runnable  run = new HiloServidor(cliente, clientes, numCli, mapaResultados);
+                
                 Thread hilo = new Thread(run);
                 hilo.start();
+                
                 //arr.add(run.getPs());
                 
                 numCli++;
