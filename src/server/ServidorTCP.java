@@ -5,15 +5,13 @@ import java.net.Socket;
 import java.util.*;
 
 
-public class Servidor {
+public class ServidorTCP {
     //Inicializamos el puerto y el numero maximo de conexciones que acepta el servidor
     private final int puerto = 2027;
     private final int noConexiones = 20;
     //Creamos una lista de sockets, donde guardaremos los sockets que se vayan conectando
     private LinkedList<Socket> clientes = new LinkedList<Socket>();
     private int numCli=1;
-    private ArrayList<PlayerScore> arr= new ArrayList<PlayerScore>();
-    private boolean endGame=false;
     private Map mapaResultados= new HashMap();
     
    //Funcion para que el servidor empieze a recibir conexiones de clientes
@@ -34,8 +32,6 @@ public class Servidor {
                 Thread hilo = new Thread(run);
                 hilo.start();
                 
-                //arr.add(run.getPs());
-                
                 numCli++;
             }
         } catch (Exception e) {
@@ -47,7 +43,7 @@ public class Servidor {
     
     //Funcion main para correr el servidor
     public static void main(String[] args) {
-        Servidor servidor= new Servidor();
+        ServidorTCP servidor= new ServidorTCP();
         servidor.escuchar();
     }
 }
