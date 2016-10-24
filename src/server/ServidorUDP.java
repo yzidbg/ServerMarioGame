@@ -3,17 +3,24 @@ package server;
 import java.io.*;   
 import java.net.*;   
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 
 public class ServidorUDP {
     private DatagramSocket socket;
     private ArrayList<InetAddress> clientes = new ArrayList<>();
+    private Map hm= new HashMap();
+    private Map mapaResultados= new HashMap();
     // configurar GUI y DatagramSocket   
     public ServidorUDP(){   
         // crear objeto DatagramSocket para enviar y recibir paquetes   
         try {
             System.err.println("Servidor Corriendo");
-            socket = new DatagramSocket( 5000 );   
+            socket = new DatagramSocket(5000);   
         }   
         // procesar los problemas que pueden ocurrir al crear el objeto DatagramSocket   
         catch( SocketException excepcionSocket ) {   
@@ -22,7 +29,7 @@ public class ServidorUDP {
     } // fin del constructor de Servidor   
     // esperar a que lleguen los paquetes, mostrar los datos y repetir el paquete al cliente   
     private void esperarPaquetes(){
-        while ( true ) { // iterar infinitamente   
+        while(true) { // iterar infinitamente   
             // recibir paquete, mostrar su contenido, devolver copia al cliente   
             try {   
                 // establecer el paquete   
@@ -30,56 +37,60 @@ public class ServidorUDP {
                 DatagramPacket recibirPaquete = new DatagramPacket( datos, datos.length );   
                 socket.receive(recibirPaquete); // esperar el paquete 
                 InetAddress dir = recibirPaquete.getAddress();
-                if(buscarCliente(dir)==false){
-                    clientes.add(recibirPaquete.getAddress());
+                int port = recibirPaquete.getPort();
+                String recibido = new String( recibirPaquete.getData(), 
+                        0, recibirPaquete.getLength());
+                if(!hm.containsKey(port)){
+                    hm.put(port, dir);
                 }
-                System.out.println("dirs "+clientes.toString());
-                //  mostrar la información del paquete recibido   
-                mostrarMensaje( "\nPaquete recibido:" +   
-                        "\nDel host: " + recibirPaquete.getAddress() +   
-                        "\nPuerto del host: " + recibirPaquete.getPort() +   
-                        "\nLongitud: " + recibirPaquete.getLength() +   
-                        "\nContenido:\n\t" + new String( recibirPaquete.getData(),   
-                        0, recibirPaquete.getLength() ) );   
-                enviarPaqueteACliente( recibirPaquete ); // enviar paquete al cliente   
+                if(hm.size()>=2){
+                    enviarPack("start");
+                }if(recibido.length()>=7){
+                    String filtro=recibido.substring(0,7);
+                    switch (filtro){
+                        case "endGame":
+                            recibido = recibido.substring(7);
+                            StringTokenizer st = new StringTokenizer(recibido, ":");
+                            String k=st.nextToken();
+                            String n=st.nextToken();
+                            mapaResultados.put(Integer.parseInt(k),n);
+                            if(mapaResultados.size()>=2){
+                                enviarPack(msgSalida());
+                            }
+                    }
+                }
+                
             }catch( IOException excepcionES ) { // procesar los problemas que pueden ocurrir al manipular el paquete   
                 mostrarMensaje( excepcionES.toString() + "\n" );   
                 excepcionES.printStackTrace();   
             }       
         } // fin de instrucción while   
     } // fin del método esperarPaquetes   
-    // repetir el paquete al cliente   
-    private void enviarPaqueteACliente(DatagramPacket packRec)throws IOException{
-        mostrarMensaje( "\n\nRepitiendo datos al cliente..." );
-        for(int i=0; i<clientes.size();i++){
+    
+    private void enviarPack(String msg) throws IOException{
+        byte datos[] = msg.getBytes();
+        Iterator it = hm.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry e = (Map.Entry)it.next();
             DatagramPacket enviarPaquete = new DatagramPacket(
-                packRec.getData(), packRec.getLength(),   
-                clientes.get(i), packRec.getPort() );   
+                datos, datos.length,(InetAddress)e.getValue(), 
+                    (int)e.getKey());   
             socket.send( enviarPaquete ); // enviar el paquete   
-        
         }
-           
-        // crear paquete a enviar   
-        mostrarMensaje( "Paquete enviado\n" );   
-    }   
+        
+        mostrarMensaje( "Paquete enviado: "+ msg+"\n" ); 
+    }
     // método utilitario que es llamado desde otros subprocesos para manipular a   
     // areaPantalla en el subproceso despachador de eventos   
     private void mostrarMensaje( final String mensajeAMostrar ){
         // mostrar el mensaje del subproceso de ejecución despachador de eventos  
-        System.out.println("MensajeEntrante: "+mensajeAMostrar);
-    }   
+        System.out.println("MensajeSaliente: "+mensajeAMostrar);
+    }  
     
-    private boolean buscarCliente(InetAddress dir){
-        boolean r=false;
-        String s = new String();
-        s=dir.toString();
-        for(int i=0; i<clientes.size();i++){
-            if(s.equals(clientes.get(i).toString())){
-                System.err.print("entra");
-                r=true;
-                break;
-            }
-        }
+     private String msgSalida(){
+        TreeMap sHM = new TreeMap(mapaResultados);
+        String r= "El jugador "+sHM.lastEntry().getValue()+" ha ganado con "
+                +sHM.lastEntry().getKey()+" puntos";
         return r;
     }
     
