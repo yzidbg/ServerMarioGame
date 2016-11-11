@@ -181,7 +181,12 @@ public class Login extends javax.swing.JFrame {
     }
     
     private boolean login(){
-        if(jugador.getPassword().equals(txtPwr.getText()))return true;
+        String pwr = new String();
+        char [] p = txtPwr.getPassword();
+        for(int i=0;i<p.length;i++){
+            pwr+=p[i];
+        }
+        if(jugador.getPassword().equals(pwr))return true;
         else return false;
     }
     
