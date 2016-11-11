@@ -64,8 +64,8 @@ public class ServidorUDP {
                 mostrarMensaje( excepcionES.toString() + "\n" );   
                 excepcionES.printStackTrace();   
             }       
-        } // fin de instrucción while   
-    } // fin del método esperarPaquetes   
+        } // fin de instrucciï¿½n while   
+    } // fin del mï¿½todo esperarPaquetes   
     
     private void enviarPack(String msg) throws IOException{
         byte datos[] = msg.getBytes();
@@ -80,10 +80,10 @@ public class ServidorUDP {
         
         mostrarMensaje( "Paquete enviado: "+ msg+"\n" ); 
     }
-    // método utilitario que es llamado desde otros subprocesos para manipular a   
+    // mï¿½todo utilitario que es llamado desde otros subprocesos para manipular a   
     // areaPantalla en el subproceso despachador de eventos   
     private void mostrarMensaje( final String mensajeAMostrar ){
-        // mostrar el mensaje del subproceso de ejecución despachador de eventos  
+        // mostrar el mensaje del subproceso de ejecuciï¿½n despachador de eventos  
         System.out.println("MensajeSaliente: "+mensajeAMostrar);
     }  
     
