@@ -40,10 +40,10 @@ public class ServidorTCP {
         
         //public void 
     }
-    
+    /*
     //Funcion main para correr el servidor
     public static void main(String[] args) {
         ServidorTCP servidor= new ServidorTCP();
         servidor.escuchar();
-    }
+    }*/
 }

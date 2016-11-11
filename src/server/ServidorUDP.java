@@ -93,11 +93,11 @@ public class ServidorUDP {
                 +sHM.lastEntry().getKey()+" puntos";
         return r;
     }
-    
+    /*
     public static void main( String args[] ){
         ServidorUDP aplicacion = new ServidorUDP();   
         aplicacion.esperarPaquetes();   
-    }
+    }*/
 
 
 } // fin de la clase Servidor  
