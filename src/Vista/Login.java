@@ -76,6 +76,11 @@ public class Login extends javax.swing.JFrame {
 
         btnCancelar.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
         jLabel2.setText("Usuario");
@@ -128,8 +133,6 @@ public class Login extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel1.getAccessibleContext().setAccessibleName("Iniciar Sesión");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -173,6 +176,11 @@ public class Login extends javax.swing.JFrame {
             txtUser.requestFocus(true);
         }
     }//GEN-LAST:event_btnEntrarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     private boolean buscarJugador(String nick){
         jugador = controladorJugador.consultarUnJugador("nick", nick);

@@ -55,4 +55,12 @@ public class JugadorController {
         jugador.setMaxPts(maxPts);
         JugadorDB.mgr.save(jugador, "updateMaxPts");
     }
+    
+    public void modificarJugador(Jugador j){
+        JugadorDB.mgr.save(j, "updateJugador");
+    }
+    
+    public void eliminarJugador(Jugador j){
+        JugadorDB.mgr.save(j, "deleteJugador");
+    }
 }

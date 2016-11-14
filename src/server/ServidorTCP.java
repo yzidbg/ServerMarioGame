@@ -20,7 +20,7 @@ public class ServidorTCP {
             //Creamos el socket servidor
             ServerSocket servidor = new ServerSocket(puerto,noConexiones);
             //Ciclo infinito para estar escuchando por nuevos clientes
-            while(numCli<=2){
+while(numCli<=2){
             //while(true){
                 System.out.println("Escuchando...."+(numCli));
                 //Cuando un cliente se conecte guardamos el socket en nuestra lista

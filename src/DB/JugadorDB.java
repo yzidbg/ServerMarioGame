@@ -44,9 +44,18 @@ public class JugadorDB extends BDManager{
                         + j.getPassword() + "')");
                 break;
             case "updateMaxPts":
-                mgr.execute("update jugadores set max_pts ='"
-                        + j.getMaxPts()
+                mgr.execute("update jugadores set max_pts ='" + j.getMaxPts()
                         + "'where id = " + j.getId() +"");
+                break;
+            case "updateJugador":
+                mgr.execute("update jugadores set nick ='" + j.getNick()
+                        + "', tipo_usuario_id='" + j.getIdTipoJug()
+                        + "', password='" + j.getPassword()
+                        + "'where id = " + j.getId() +"");
+                break;
+            case "deleteJugador":
+                mgr.execute("delete from jugadores WHERE id =" + j.getId() +"");
+                break;
         }
     }
     
