@@ -5,17 +5,19 @@
  */
 package Vista;
 
+import Controlador.ConexionController;
 import Controlador.JugadorController;
+import Modelo.Conexion10;
+import Modelo.Conexion5;
 import Modelo.Jugador;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import server.ServidorTCP;
+import Server.ServidorTCP;
 
 /**
  *
@@ -26,8 +28,21 @@ public class Server extends javax.swing.JFrame {
     /**
      * Creates new form Principal
      */
-    private JugadorController controladorJugador = new JugadorController();
-    private DefaultTableModel modelo = new DefaultTableModel(){
+    JugadorController controladorJugador = new JugadorController();
+    ConexionController controladorConexion = new ConexionController();
+    private DefaultTableModel modeloJug = new DefaultTableModel(){
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; //To change body of generated methods, choose Tools | Templates.
+        }
+    };
+    private DefaultTableModel modeloTop10 = new DefaultTableModel(){
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; //To change body of generated methods, choose Tools | Templates.
+        }
+    };
+    private DefaultTableModel modeloTop5 = new DefaultTableModel(){
         @Override
         public boolean isCellEditable(int row, int column) {
             return false; //To change body of generated methods, choose Tools | Templates.
@@ -35,21 +50,37 @@ public class Server extends javax.swing.JFrame {
     };
     private Jugador jugador = null;
     
-    public Server() {
+    public Server(){
         initComponents();
         setearTablaJugadores();
+        setearTablaTop10();
+        setearTablaTop5();
         fillTablaJugadores();
     }
     
     private void setearTablaJugadores(){
-        modelo.addColumn("id");
-        modelo.addColumn("NickName");
-        modelo.addColumn("MaxPuntaje");
-        modelo.addColumn("Perfil");
-        modelo.addColumn("Pasword");
-        tablaUsuarios.setModel(modelo);
+        modeloJug.addColumn("id");
+        modeloJug.addColumn("NickName");
+        modeloJug.addColumn("MaxPuntaje");vaciarTabla(modeloTop10);
+        modeloJug.addColumn("Perfil");
+        modeloJug.addColumn("Pasword");
+        tablaUsuarios.setModel(modeloJug);
         hideColumns(0);
         hideColumns(4);
+    }
+    
+    private void setearTablaTop10(){
+        modeloTop10.addColumn("NickName");
+        modeloTop10.addColumn("DirIP");
+        modeloTop10.addColumn("FechaHora");
+        modeloTop10.addColumn("Puntaje");
+        tablaRepotes.setModel(modeloTop10);
+    }
+    
+    private void setearTablaTop5(){
+        modeloTop5.addColumn("NickName");
+        modeloTop5.addColumn("Conexiones");
+        tablaRepotes.setModel(modeloTop5);
     }
     
     private void hideColumns(int i){
@@ -66,7 +97,32 @@ public class Server extends javax.swing.JFrame {
             if(j.getIdTipoJug().equals("100"))s="Administrador";
             else s="Usuario";
             Object [] fila ={j.getId(),j.getNick(),j.getMaxPts(),s,j.getPassword()};
-            modelo.addRow(fila);
+            modeloJug.addRow(fila);
+        }
+        a=null;
+    }
+    
+    private void fillTablaTop10(){
+        //setearTablaTop10();
+        Conexion10 c = new Conexion10();
+        ArrayList a= controladorConexion.consultarTop10();
+        for(int i=0; i<a.size();i++){
+            String s;
+            c = (Conexion10) a.get(i);        // TODO add your handling code here:
+            Object [] fila ={c.getNick(),c.getIpCon(),c.getFechaHora(),c.getPuntos()};
+            modeloTop10.addRow(fila);
+        }
+        a=null;
+    }
+    
+    private void fillTablaTop5(){
+        //setearTablaTop10();
+        Conexion5 c = new Conexion5();
+        ArrayList a= controladorConexion.consultarTop5();
+        for(int i=0; i<a.size();i++){
+            c = (Conexion5) a.get(i);        // TODO add your handling code here:
+            Object [] fila ={c.getNick(),c.getConexiones()};
+            modeloTop5.addRow(fila);
         }
         a=null;
     }
@@ -102,6 +158,10 @@ public class Server extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtValPwr = new javax.swing.JPasswordField();
         jPanel3 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tablaRepotes = new javax.swing.JTable();
         btnStartServer = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -290,15 +350,58 @@ public class Server extends javax.swing.JFrame {
 
         jPanel3.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
 
+        jButton1.setText("Top 10 - Puntos");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Top 5 - Conexiones");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        tablaRepotes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tablaRepotes);
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 566, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 354, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         pestanas.addTab("Reportes", jPanel3);
@@ -451,7 +554,8 @@ public class Server extends javax.swing.JFrame {
                 if(rdioAdmin.isSelected())p="100";
                 else p="200";
                 controladorJugador.agregarJugador(txtUser.getText(),"0", p, charToString(txtPwr.getPassword()));
-                actualizarTabla();
+                vaciarTabla(modeloJug);
+                fillTablaJugadores();
                 manejoControles(false);
                 manejoBotonesPpales("", true);
                 alistarControles();
@@ -460,7 +564,7 @@ public class Server extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane,m.get(b));
             }
         }else if(btnUpdate.isEnabled()){
-            int op=JOptionPane.showOptionDialog(this, "Esta seguro?", "Advertencia",
+            int op=JOptionPane.showOptionDialog(null, "Esta seguro?", "Advertencia",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             if(op==0){
                 Map m = validarFilled(0);
@@ -474,7 +578,8 @@ public class Server extends javax.swing.JFrame {
                     jugador.setPassword(charToString(txtPwr.getPassword()));
                     jugador.setIdTipoJug(p);
                     controladorJugador.modificarJugador(jugador);
-                    actualizarTabla();
+                    vaciarTabla(modeloJug);
+                    fillTablaJugadores();
                     manejoControles(false);
                     manejoBotonesPpales("", true);
                     alistarControles();
@@ -484,12 +589,13 @@ public class Server extends javax.swing.JFrame {
                 }
             }
         }else if(btnDelete.isEnabled()){
-            int op=JOptionPane.showOptionDialog(this, "Esta seguro de eliminar el usuario "
+            int op=JOptionPane.showOptionDialog(null, "Esta seguro de eliminar el usuario "
                     +jugador.getNick()+"?", "Advertencia",JOptionPane.YES_NO_OPTION, 
                     JOptionPane.QUESTION_MESSAGE, null, null, null);
             if(op==0){
                 controladorJugador.eliminarJugador(jugador);
-                actualizarTabla();
+                vaciarTabla(modeloJug);
+                fillTablaJugadores();
                 alistarControles();    
                 manejoControles(false);
                 manejoBotonesPpales("", true);
@@ -498,12 +604,27 @@ public class Server extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAceptarActionPerformed
 
-    private void actualizarTabla(){
-        int a =modelo.getRowCount();
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        //setearTablaTop10();
+        tablaRepotes.setModel(modeloTop10);
+        vaciarTabla(modeloTop10);
+        fillTablaTop10();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        //setearTablaTop5();
+        tablaRepotes.setModel(modeloTop5);
+        vaciarTabla(modeloTop5);
+        fillTablaTop5();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void vaciarTabla(DefaultTableModel m){
+        int a =m.getRowCount();
         for(int i=0; i<a;i++){
-            modelo.removeRow(0);
+            m.removeRow(0);
         }
-        fillTablaJugadores();
     }
     
     private boolean buscarJugador(String nick){
@@ -619,6 +740,8 @@ public class Server extends javax.swing.JFrame {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnStartServer;
     private javax.swing.JButton btnUpdate;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -628,10 +751,12 @@ public class Server extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane pestanas;
     private javax.swing.JRadioButton rdioAdmin;
     private javax.swing.ButtonGroup rdioGrupoPerfil;
     private javax.swing.JRadioButton rdioUser;
+    private javax.swing.JTable tablaRepotes;
     private javax.swing.JTable tablaUsuarios;
     private javax.swing.JPasswordField txtPwr;
     private javax.swing.JTextField txtUser;

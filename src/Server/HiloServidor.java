@@ -1,5 +1,5 @@
 
-package server;
+package Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
