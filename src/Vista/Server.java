@@ -61,7 +61,7 @@ public class Server extends javax.swing.JFrame {
     private void setearTablaJugadores(){
         modeloJug.addColumn("id");
         modeloJug.addColumn("NickName");
-        modeloJug.addColumn("MaxPuntaje");vaciarTabla(modeloTop10);
+        modeloJug.addColumn("MaxPuntaje");
         modeloJug.addColumn("Perfil");
         modeloJug.addColumn("Pasword");
         tablaUsuarios.setModel(modeloJug);
