@@ -502,7 +502,6 @@ public class Server extends javax.swing.JFrame {
                 jugador.setIdTipoJug("100");
             else jugador.setIdTipoJug("200");
             jugador.setPassword(String.valueOf(tablaUsuarios.getValueAt(tablaUsuarios.getSelectedRow(), 4)));
-            System.out.println(jugador.toString());
             fillSel(jugador);
         }
         
@@ -521,6 +520,8 @@ public class Server extends javax.swing.JFrame {
         if(jugador!=null){
             manejoControles(true);
             manejoBotonesPpales("Modificar", false);
+            txtPwr.setText("");
+            txtValPwr.setText("");
         }
         else JOptionPane.showMessageDialog(rootPane, "Seleccione un usuario");
     }//GEN-LAST:event_btnUpdateActionPerformed
@@ -553,7 +554,7 @@ public class Server extends javax.swing.JFrame {
                 String p;
                 if(rdioAdmin.isSelected())p="100";
                 else p="200";
-                controladorJugador.agregarJugador(txtUser.getText(),"0", p, charToString(txtPwr.getPassword()));
+                controladorJugador.agregarJugador(txtUser.getText(),"0", p, charToStringM(txtPwr.getPassword()));
                 vaciarTabla(modeloJug);
                 fillTablaJugadores();
                 manejoControles(false);
@@ -575,7 +576,7 @@ public class Server extends javax.swing.JFrame {
                     if(rdioAdmin.isSelected())p="100";
                     else p="200";
                     jugador.setNick(txtUser.getText());
-                    jugador.setPassword(charToString(txtPwr.getPassword()));
+                    jugador.setPassword(charToStringM(txtPwr.getPassword()));
                     jugador.setIdTipoJug(p);
                     controladorJugador.modificarJugador(jugador);
                     vaciarTabla(modeloJug);
@@ -650,8 +651,8 @@ public class Server extends javax.swing.JFrame {
             return m;
         }
         char p2 [] = txtValPwr.getPassword();
-        a=charToString(p);
-        b=charToString(p2);
+        a=charToStringM(p);
+        b=charToStringM(p2);
         if(p.length<=0||!a.equals(b)){
             m.put(Boolean.FALSE,"Las contraseñas no coinciden");
             return m;
@@ -664,7 +665,7 @@ public class Server extends javax.swing.JFrame {
         return m;
     }
     
-    private String charToString(char [] c){
+    private String charToStringM(char [] c){
         String r="";
         for(int i =0; i<c.length; i++){
             r+=c[i];

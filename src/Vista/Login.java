@@ -7,10 +7,12 @@ package Vista;
 
 import Controlador.JugadorController;
 import Modelo.Jugador;
+import java.security.MessageDigest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -23,7 +25,7 @@ public class Login extends javax.swing.JFrame {
      */
     Jugador jugador = null;
     JugadorController controladorJugador = new JugadorController();
-    
+    MessageDigest  md = null;
     
     public Login() {
         initComponents();
@@ -189,13 +191,25 @@ public class Login extends javax.swing.JFrame {
     }
     
     private boolean login(){
-        String pwr = new String();
+        String pwrSal = new String();
+        byte[] mb=null;
         char [] p = txtPwr.getPassword();
-        for(int i=0;i<p.length;i++){
-            pwr+=p[i];
-        }
-        if(jugador.getPassword().equals(pwr))return true;
+        String pwr = charToStringM(p);
+        try{
+            md= MessageDigest.getInstance("SHA-1");
+            md.update(pwr.getBytes());
+            mb = md.digest();
+            pwrSal=charToStringM(Hex.encodeHex(mb));
+        }catch(Exception e){}
+        
+        if(jugador.getPassword().equals(pwrSal))return true;
         else return false;
+    }
+    
+    private String charToStringM(char [] c){
+        String r="";
+        for(int i =0; i<c.length; i++)r+=c[i];
+        return r;
     }
     
     /**
